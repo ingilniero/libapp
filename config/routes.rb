@@ -1,4 +1,5 @@
 Libapp::Application.routes.draw do
+  get '/register', to: 'readers#new', as: 'register'
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
