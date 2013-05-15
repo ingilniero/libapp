@@ -5,7 +5,13 @@ Feature: Reader Registration
   After the reader is logged in and is ready to work with the application.
 
   Scenario: Reader registers successfully via register form
-    Given a guest
+    Given I am a guest
     When I fiil the register form with valid data
     Then  I should be registered in the application
-    And I shoudld be logged in
+    And I should be logged in
+
+  Scenario: Reader tries to register with invalid data
+    Given I am a guest
+    When I fill the register form with invalid data
+    Then I should see the register form again
+    And I should not be registered in the application
