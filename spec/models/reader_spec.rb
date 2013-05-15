@@ -12,34 +12,17 @@ describe Reader do
       }
     end
 
-    it 'is invalid when email is empty' do
-      @params[:email] = nil
-      reader = Reader.new(@params)
-      expect(reader.valid?).to be_false
-    end
+    it { should validate_presence_of(:email) }
+    it { should validate_presence_of(:password) }
 
-    it 'is invalid when password is empty' do
-      @params[:password] = nil
-      reader = Reader.new(@params)
-      expect(reader.valid?).to be_false
-    end
     it 'is invalid when email is invalid' do
       @params[:email] = 'reader'
       reader = Reader.new(@params)
       expect(reader.valid?).to be_false
     end
 
-    it 'is invalid when email is not unique' do
-      Reader.create(@params)
-      reader = Reader.new(@params)
-      expect(reader.valid?).to be_false
-    end
-
-    it 'is invalid when password and password_confirmation are not the same' do
-      @params[:password] = 'p'
-      reader = Reader.new(@params)
-      expect(reader.valid?).to be_false
-    end
+    it { should validate_uniqueness_of(:email) }
+    it { should validate_confirmation_of(:password) }
   end
 
   it 'is an ActiveRecord model' do
