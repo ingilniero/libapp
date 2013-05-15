@@ -9,3 +9,8 @@ When(/^I fiil the register form with valid data$/) do
   click_button 'Register'
 end
 
+Then(/^I should be registered in the application$/) do
+  expect(Reader.find_by_email("reader01@mail.com")).to_not be_nil
+end
+
+
