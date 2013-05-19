@@ -34,7 +34,7 @@ end
 gem 'jquery-rails'
 gem 'strong_parameters'
 gem 'email_validator'
-
+gem 'active_attr'
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
 
