@@ -42,6 +42,25 @@ Then(/^I should see guest menu$/) do
   expect(page).to have_link('Register', href: register_path)
 end
 
+Given(/^I am a "(.*?)" reader$/) do |email|
+  pending # express the regexp above with the code you wish you had
+end
 
+Then(/^I should see "(.*?)" reader menu$/) do |email|
+  pending # express the regexp above with the code you wish you had
+end
 
+Given(/^reader with "(.*?)" exists$/) do |email|
+  Reader.create(email: email, password: "pass", password_confirmation: "pass")
+end
 
+When(/^I fill the login form with valid data for "(.*?)" reader$/) do |email|
+  visit('/login')
+  fill_in 'login_email', with: email
+  fill_in 'login_password', with: 'pass'
+  click_button 'Login'
+end
+
+Then(/^should be logged in as "(.*?)" reader$/) do |email|
+  expect(page).to have_content("Welcome, #{email}")
+end
