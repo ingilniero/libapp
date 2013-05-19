@@ -50,9 +50,15 @@ describe ReadersController do
         post :create, reader: params
         expect(response).to redirect_to(root_url)
       end
+
       it 'assigns a success flash message' do
         post :create, reader: params
         expect(flash[:notice]).not_to be_nil
+      end
+
+      it 'logs in reader' do
+        post :create, reader: params
+        expect(session[:reader_id]).to eq(reader.id)
       end
     end
 

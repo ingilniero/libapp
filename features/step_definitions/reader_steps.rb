@@ -48,7 +48,7 @@ Given(/^I am a "(.*?)" reader$/) do |email|
 end
 
 Then(/^I should see "(.*?)" reader menu$/) do |email|
-  expect(page).to have_content("Welcome. #{email}")
+  expect(page).to have_content("Welcome, #{email}")
 end
 
 Given(/^reader with "(.*?)" exists$/) do |email|
