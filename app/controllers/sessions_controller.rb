@@ -8,4 +8,9 @@ class SessionsController < ApplicationController
     session[:reader_id] =  login.authenticate
     redirect_to root_url, notice: "You're login!"
   end
+
+  def destroy
+    session[:reader_id] = nil
+    redirect_to root_url
+  end
 end
