@@ -1,5 +1,10 @@
 When(/^I fill the new book form with valid data$/) do
-    pending # express the regexp above with the code you wish you had
+  visit new_book_url
+  fill_in "book_title", with: "The Hamlet"
+  fill_in "book_pages", with: "150"
+  fill_in "book_author", with: "William Shakespeare"
+  fill_in "book_description", with: "Excellent play!"
+  click_button "Create"
 end
 
 Then(/^the book should be added to database$/) do
