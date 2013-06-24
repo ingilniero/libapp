@@ -8,23 +8,25 @@ When(/^I fill the new book form with valid data$/) do
 end
 
 Then(/^the book should be added to database$/) do
-    pending # express the regexp above with the code you wish you had
+  expect(Book.find_by_title("The Hamlet")).not_to be_nil
 end
 
 Then(/^I should see it on library page$/) do
-    pending # express the regexp above with the code you wish you had
+  expect(page).to have_content("The Hamlet")
 end
 
 When(/^I fill the new book form with empty title$/) do
-    pending # express the regexp above with the code you wish you had
+   visit new_book_url
+   click_button "Create"
 end
 
 Then(/^the book should not be added to database$/) do
-    pending # express the regexp above with the code you wish you had
+   expect(Book.count).to eq(0) 
 end
 
 Then(/^I should see the new book form with error message$/) do
-    pending # express the regexp above with the code you wish you had
+   expect(page).to have_selector("form#new_book")
+   expect(page).to have_selector(".alert-error")
 end
 
 Given(/^book "(.*?)" exists$/) do |arg1|
