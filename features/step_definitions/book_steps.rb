@@ -46,15 +46,15 @@ Then(/^I should see "(.*?)" book edit link$/) do |title|
 end
 
 When(/^I go to nonexistent book page$/) do
-    pending # express the regexp above with the code you wish you had
+  visit("/books/0")
 end
 
 Then(/^I should be redirected to library page$/) do
-    pending # express the regexp above with the code you wish you had
+  expect(current_path).to eq(root_path)
 end
 
-Then(/^I should see "(.*?)" error message$/) do |arg1|
-    pending # express the regexp above with the code you wish you had
+Then(/^I should see "(.*?)" error message$/) do |message|
+  expect(page).to have_content(message)  
 end
 
 When(/^I change book title to "(.*?)"$/) do |arg1|

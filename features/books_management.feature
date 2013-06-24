@@ -20,7 +20,7 @@ Feature: Books Management
   Scenario: Try to view details of nonexistent book
     When I go to nonexistent book page
     Then I should be redirected to library page
-    And I should see "Book deoesn't exist" error message
+    And I should see "Book doesn't exist" error message
 
   Scenario: Edit existent book
     Given book "The Hamlet" exists

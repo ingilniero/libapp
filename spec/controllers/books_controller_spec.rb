@@ -39,4 +39,40 @@ describe BooksController do
       expect(response).to render_template :index
     end
   end
+
+  describe "GET #show" do
+    context "book exists" do
+      let!(:book) { stub_model(Book) }
+
+      before :each do
+        Book.stub(:find).and_return(book)
+      end
+
+      it "sends find message to Book class" do
+        Book.should_receive(:find).with("1")
+        get :show, id: 1
+      end
+
+      it "assigns @book to the view" do
+        get :show, id: 1
+        expect(assigns[:book]).to eq(book)
+      end
+    end
+
+    context "book does't exist" do
+      before :each do
+        Book.stub(:find).and_raise(ActiveRecord::RecordNotFound)
+      end
+
+      it "redirects to not found page" do
+        get :show, id: 1
+        expect(response).to redirect_to root_path
+      end
+
+      it "assigns flash[:error]" do
+        get :show, id: 0
+        expect(flash[:error]).not_to be_nil
+      end
+    end
+  end
 end

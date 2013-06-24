@@ -1,4 +1,6 @@
 class BooksController < ApplicationController
+  before_filter :find_book, only: [:show]
+
   def new
     @book = Book.new
   end
@@ -18,11 +20,19 @@ class BooksController < ApplicationController
   end
 
   def show
-    @book = Book.first
   end
 
   private
   def book_params
     params.require(:book).permit!
+  end
+
+  def find_book
+    begin
+      @book = Book.find(params[:id])
+    rescue
+      flash[:error] = "Book doesn't exists"
+      redirect_to root_url
+    end
   end
 end
