@@ -29,20 +29,20 @@ Then(/^I should see the new book form with error message$/) do
    expect(page).to have_selector(".alert-error")
 end
 
-Given(/^book "(.*?)" exists$/) do |arg1|
-    pending # express the regexp above with the code you wish you had
+Given(/^book "(.*?)" exists$/) do |title|
+  @book = Book.create(id: 1, title: title)
 end
 
 When(/^I go to "(.*?)" book page$/) do |arg1|
-    pending # express the regexp above with the code you wish you had
+  visit book_url(@book)
 end
 
-Then(/^I should see "(.*?)" book details$/) do |arg1|
-    pending # express the regexp above with the code you wish you had
+Then(/^I should see "(.*?)" book details$/) do |title|
+  expect(page).to have_content(title)
 end
 
-Then(/^I should see "(.*?)" book edit link$/) do |arg1|
-    pending # express the regexp above with the code you wish you had
+Then(/^I should see "(.*?)" book edit link$/) do |title|
+  expect(page).to have_link("Edit", href: edit_book_path(@book))
 end
 
 When(/^I go to nonexistent book page$/) do
