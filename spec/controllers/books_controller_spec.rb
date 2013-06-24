@@ -18,4 +18,25 @@ describe BooksController do
       expect(response).to render_template :new
     end
   end
+
+  describe "GET #index" do
+    before :each do
+      Book.stub(:all).and_return([])
+    end
+
+    it "sends all message to Book" do
+      Book.should_receive(:all)
+      get :index
+    end
+
+    it "assigns @books to the view" do
+      get :index
+      expect(assigns[:books]).to eq([])
+    end
+
+    it "renders :index template" do
+      get :index
+      expect(response).to render_template :index
+    end
+  end
 end
