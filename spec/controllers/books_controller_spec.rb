@@ -19,6 +19,72 @@ describe BooksController do
     end
   end
 
+  describe "POST #create" do
+    let(:params) do
+      {
+        "title" => "title",
+        "author" => "author",
+        "pages" => "123",
+        "description" => "description"
+      }
+    end
+
+    let!(:book) { stub_model(Book) }
+
+    before :each do
+      Book.stub(:new).and_return(book)
+    end
+
+    it "can mass-assign parameters" do
+      Book.unstub(:new)
+      post :create, book: params
+    end
+
+    it "sends new message with params to book model" do
+      Book.should_receive(:new).with(params)
+      post :create, book: params
+    end
+
+    it "sends save message to book model" do
+      book.should_receive(:save)
+      post :create, book: params
+    end
+
+    context "valid data" do
+      before :each do
+        book.stub(:save).and_return(true)
+        post :create, book: params
+      end
+
+      it "redirects to index page" do
+        expect(response).to redirect_to books_url
+      end
+
+      it "assign flash[:notice]" do
+        expect(flash[:notice]).not_to be_nil
+      end
+    end
+
+    context "invalid data" do
+      before :each do
+        book.stub(:save).and_return(false)
+        post :create, book: params
+      end
+
+      it "renders new template" do
+        expect(response).to render_template :new
+      end
+
+      it "assings flash[:error] message" do
+        expect(flash[:error]).to_not be_nil
+      end
+
+      it "assigns @book variable" do
+        expect(assigns[:book]).to eq(book)
+      end
+    end
+  end
+
   describe "GET #index" do
     before :each do
       Book.stub(:all).and_return([])
