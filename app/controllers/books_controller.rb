@@ -1,5 +1,5 @@
 class BooksController < ApplicationController
-  before_filter :find_book, only: [:show, :edit]
+  before_filter :find_book, only: [:show, :edit, :update]
 
   def new
     @book = Book.new
@@ -26,7 +26,12 @@ class BooksController < ApplicationController
   end
 
   def update
-  render nothing: true
+    if @book.update_attributes(book_params)
+      redirect_to books_url, notice: "Book has been updated"
+    else
+      flash[:error] = "Please, provide title for the book"
+      render :edit
+    end
   end
 
   private

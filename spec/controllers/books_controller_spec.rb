@@ -158,4 +158,65 @@ describe BooksController do
       expect(response).to render_template :edit
     end
   end
+
+  describe "POST #update" do
+    let!(:params) do
+      {
+        "title" => "title",
+        "author" => "author",
+        "pages" => "123",
+        "description" => "description"
+      }
+    end
+
+    let!(:book) { stub_model(Book, id: 1) }
+
+    before :each do
+      Book.stub(:find).and_return(book)
+    end
+
+    it "sends find message" do
+      Book.should_receive(:find)
+      put :update, id: book.id, book: params
+    end
+
+    it "sends update_attributes message with provided params" do
+      book.should_receive(:update_attributes)
+      put :update, id: book.id, book: params
+    end
+
+    context "when update_attributes returns true" do
+      before :each do
+        book.stub(:update_attributes).and_return(true)
+        put :update, id: book.id, book: params
+      end
+
+      it "redirects to library page" do
+        expect(response).to redirect_to books_url
+      end
+
+      it "assigns flash[:notice]" do
+        expect(flash[:notice]).to_not be_nil
+      end
+    end
+
+    context "when update_attributes returns false" do
+      before :each do
+        book.stub(:update_attributes).and_return(false)
+        put :update, id: book.id, book: params
+      end
+
+      it "renders edit template" do
+        expect(response).to render_template :edit
+      end
+
+      it "assigns @book variable to view" do
+        expect(assigns[:book]).to eq(book)
+      end
+
+      it "assigns flash[:error]" do
+        expect(flash[:error]).not_to be_nil
+      end
+    end
+  end
 end

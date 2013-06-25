@@ -21,7 +21,7 @@ When(/^I fill the new book form with empty title$/) do
 end
 
 Then(/^the book should not be added to database$/) do
-   expect(Book.count).to eq(0) 
+   expect(Book.count).to eq(0)
 end
 
 Then(/^I should see the new book form with error message$/) do
@@ -54,7 +54,7 @@ Then(/^I should be redirected to library page$/) do
 end
 
 Then(/^I should see "(.*?)" error message$/) do |message|
-  expect(page).to have_content(message)  
+  expect(page).to have_content(message)
 end
 
 When(/^I change book title to "(.*?)"$/) do |title|
@@ -63,16 +63,16 @@ When(/^I change book title to "(.*?)"$/) do |title|
   click_button "Update"
 end
 
-Then(/^book "(.*?)" should not exist in database$/) do |arg1|
-    pending # express the regexp above with the code you wish you had
+Then(/^book "(.*?)" should not exist in database$/) do |title|
+  expect(Book.find_by_title(title)).to be_false
 end
 
-Then(/^book "(.*?)" should exist in database$/) do |arg1|
-    pending # express the regexp above with the code you wish you had
+Then(/^book "(.*?)" should exist in database$/) do |title|
+  expect(Book.find_by_title(title)).not_to be_nil
 end
 
-Then(/^I should see "(.*?)" book on library$/) do |arg1|
-    pending # express the regexp above with the code you wish you had
+Then(/^I should see "(.*?)" book on library$/) do |title|
+  expect(page).to have_content(title)
 end
 
 When(/^I delete it$/) do
