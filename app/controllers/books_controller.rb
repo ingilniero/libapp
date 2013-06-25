@@ -1,5 +1,5 @@
 class BooksController < ApplicationController
-  before_filter :find_book, only: [:show]
+  before_filter :find_book, only: [:show, :edit]
 
   def new
     @book = Book.new
@@ -20,6 +20,13 @@ class BooksController < ApplicationController
   end
 
   def show
+  end
+
+  def edit
+  end
+
+  def update
+  render nothing: true
   end
 
   private

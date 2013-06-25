@@ -141,4 +141,21 @@ describe BooksController do
       end
     end
   end
+
+  describe "GET #edit" do
+    let!(:book) { stub_model(Book, id: 1)}
+
+    before :each do
+      Book.stub(:find).and_return(book)
+      get :edit, id: book.id
+    end
+
+    it "assigns @book to view" do
+      expect(assigns[:book]).to eq(book)
+    end
+
+    it "render edit template" do
+      expect(response).to render_template :edit
+    end
+  end
 end

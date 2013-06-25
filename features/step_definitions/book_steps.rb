@@ -57,8 +57,10 @@ Then(/^I should see "(.*?)" error message$/) do |message|
   expect(page).to have_content(message)  
 end
 
-When(/^I change book title to "(.*?)"$/) do |arg1|
-    pending # express the regexp above with the code you wish you had
+When(/^I change book title to "(.*?)"$/) do |title|
+  visit edit_book_path(@book)
+  fill_in "book_title", with: title
+  click_button "Update"
 end
 
 Then(/^book "(.*?)" should not exist in database$/) do |arg1|
