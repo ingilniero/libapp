@@ -76,9 +76,10 @@ Then(/^I should see "(.*?)" book on library$/) do |title|
 end
 
 When(/^I delete it$/) do
-    pending # express the regexp above with the code you wish you had
+  visit edit_book_path(@book)
+  click_on "Delete"
 end
 
-Then(/^I should not see "(.*?)" book on library page$/) do |arg1|
-    pending # express the regexp above with the code you wish you had
+Then(/^I should not see "(.*?)" book on library page$/) do |title|
+  expect(page).not_to have_content(title)
 end

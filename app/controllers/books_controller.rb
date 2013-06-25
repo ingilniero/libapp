@@ -1,5 +1,5 @@
 class BooksController < ApplicationController
-  before_filter :find_book, only: [:show, :edit, :update]
+  before_filter :find_book, only: [:show, :edit, :update, :destroy]
 
   def new
     @book = Book.new
@@ -32,6 +32,11 @@ class BooksController < ApplicationController
       flash[:error] = "Please, provide title for the book"
       render :edit
     end
+  end
+
+  def destroy
+    @book.destroy
+    redirect_to books_url
   end
 
   private

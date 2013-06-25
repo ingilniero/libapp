@@ -219,4 +219,19 @@ describe BooksController do
       end
     end
   end
+
+  describe "DELETE #destroy" do
+    let!(:book) { stub_model(Book, id: 1) }
+
+    before :each do
+      Book.stub(:find).and_return(book)
+      book.stub(:destroy).and_return(true)
+    end
+
+    it "sends destroy" do
+      book.should_receive(:destroy)
+      delete :destroy, id: book.id
+      expect(response).to redirect_to books_url
+    end
+  end
 end
