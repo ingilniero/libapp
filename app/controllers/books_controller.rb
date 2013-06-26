@@ -1,5 +1,6 @@
 class BooksController < ApplicationController
   before_filter :find_book, only: [:show, :edit, :update, :destroy]
+  before_filter :require_login, only: [:new, :create]
 
   def new
     @book = Book.new
@@ -51,5 +52,9 @@ class BooksController < ApplicationController
       flash[:error] = "Book doesn't exists"
       redirect_to root_url
     end
+  end
+
+  def require_login
+    raise AccessDenied unless session[:reader_id]
   end
 end

@@ -7,15 +7,32 @@ describe BooksController do
 
     before :each do
       Book.stub(:new).and_return(book)
-      get :new
     end
 
-    it "assigns book variable to view" do
-      expect(assigns[:book]).to eq(book)
+    context "when reader is logged in" do
+      before :each do
+        session[:reader_id] = 1
+        get :new
+      end
+
+      it "assigns book variable to view" do
+        expect(assigns[:book]).to eq(book)
+      end
+
+      it "renders :new template" do
+        expect(response).to render_template :new
+      end
     end
 
-    it "renders :new template" do
-      expect(response).to render_template :new
+    context "when reader is not logged in" do
+      before :each do
+        session[:reader_id] = nil
+      end
+
+      it "redirects to access denied page" do
+        get :new
+        expect(response).to redirect_to access_denied_path
+      end
     end
   end
 
@@ -29,58 +46,73 @@ describe BooksController do
       }
     end
 
-    let!(:book) { stub_model(Book) }
+    context "when reader is logged in" do
 
-    before :each do
-      Book.stub(:new).and_return(book)
-    end
+      let!(:book) { stub_model(Book) }
 
-    it "can mass-assign parameters" do
-      Book.unstub(:new)
-      post :create, book: params
-    end
-
-    it "sends new message with params to book model" do
-      Book.should_receive(:new).with(params)
-      post :create, book: params
-    end
-
-    it "sends save message to book model" do
-      book.should_receive(:save)
-      post :create, book: params
-    end
-
-    context "valid data" do
       before :each do
-        book.stub(:save).and_return(true)
+        Book.stub(:new).and_return(book)
+        session[:reader_id] = 1
+      end
+
+      it "can mass-assign parameters" do
+        Book.unstub(:new)
         post :create, book: params
       end
 
-      it "redirects to index page" do
-        expect(response).to redirect_to books_url
-      end
-
-      it "assign flash[:notice]" do
-        expect(flash[:notice]).not_to be_nil
-      end
-    end
-
-    context "invalid data" do
-      before :each do
-        book.stub(:save).and_return(false)
+      it "sends new message with params to book model" do
+        Book.should_receive(:new).with(params)
         post :create, book: params
       end
 
-      it "renders new template" do
-        expect(response).to render_template :new
+      it "sends save message to book model" do
+        book.should_receive(:save)
+        post :create, book: params
       end
 
-      it "assings flash[:error] message" do
-        expect(flash[:error]).to_not be_nil
+      context "valid data" do
+        before :each do
+          book.stub(:save).and_return(true)
+          post :create, book: params
+        end
+
+        it "redirects to index page" do
+          expect(response).to redirect_to books_url
+        end
+
+        it "assign flash[:notice]" do
+          expect(flash[:notice]).not_to be_nil
+        end
       end
 
-      it "assigns @book variable" do
-        expect(assigns[:book]).to eq(book)
+      context "invalid data" do
+        before :each do
+          book.stub(:save).and_return(false)
+          post :create, book: params
+        end
+
+        it "renders new template" do
+          expect(response).to render_template :new
+        end
+
+        it "assings flash[:error] message" do
+          expect(flash[:error]).to_not be_nil
+        end
+
+        it "assigns @book variable" do
+          expect(assigns[:book]).to eq(book)
+        end
+      end
+    end
+
+    context "when user is not logged in" do
+      before :each do
+        session[:reader_id] = nil
+      end
+
+      it "redirects to access denied page" do
+        post :create
+        expect(response).to redirect_to access_denied_path
       end
     end
   end
