@@ -13,6 +13,7 @@ describe Reader do
     end
 
     it { should validate_presence_of(:email) }
+    it { should have_many(:books) }
 
     it 'is invalid when email is invalid' do
       @params[:email] = 'reader'

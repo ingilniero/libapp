@@ -8,6 +8,7 @@ class BooksController < ApplicationController
 
   def create
     @book = Book.new book_params
+    @book.reader_id = session[:reader_id]
     if @book.save
       redirect_to books_url, notice: "You added a new book into your library"
     else
@@ -24,6 +25,7 @@ class BooksController < ApplicationController
   end
 
   def edit
+    raise AccessDenied unless @book.owned_by?(current_user)
   end
 
   def update
@@ -36,6 +38,7 @@ class BooksController < ApplicationController
   end
 
   def destroy
+    raise AccessDenied unless @book.owned_by?(current_user)
     @book.destroy
     redirect_to books_url
   end

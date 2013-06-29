@@ -70,6 +70,11 @@ describe BooksController do
         post :create, book: params
       end
 
+      it "sends reader_id= message to book model" do
+        book.should_receive(:reader_id=).with(1)
+        post :create, book: params
+      end
+
       context "valid data" do
         before :each do
           book.stub(:save).and_return(true)
@@ -179,15 +184,32 @@ describe BooksController do
 
     before :each do
       Book.stub(:find).and_return(book)
-      get :edit, id: book.id
     end
 
-    it "assigns @book to view" do
-      expect(assigns[:book]).to eq(book)
+    context "when reader is the owner" do
+      before :each do
+        book.stub(:owned_by?).and_return(true)
+        get :edit, id: book.id
+      end
+
+      it "assigns @book to view" do
+        expect(assigns[:book]).to eq(book)
+      end
+
+      it "render edit template" do
+        expect(response).to render_template :edit
+      end
     end
 
-    it "render edit template" do
-      expect(response).to render_template :edit
+    context "when reader is not the owner" do
+      before :each do
+        book.stub(:owned_by?).and_return(false)
+      end
+
+     it "redirects to access denied page" do
+       get :edit, id: book.id
+       expect(response).to redirect_to access_denied_path
+     end
     end
   end
 
@@ -201,53 +223,68 @@ describe BooksController do
       }
     end
 
-    let!(:book) { stub_model(Book, id: 1) }
+    context "when reader is logged in" do
 
-    before :each do
-      Book.stub(:find).and_return(book)
-    end
+      let!(:book) { stub_model(Book, id: 1) }
 
-    it "sends find message" do
-      Book.should_receive(:find)
-      put :update, id: book.id, book: params
-    end
-
-    it "sends update_attributes message with provided params" do
-      book.should_receive(:update_attributes)
-      put :update, id: book.id, book: params
-    end
-
-    context "when update_attributes returns true" do
       before :each do
-        book.stub(:update_attributes).and_return(true)
+        Book.stub(:find).and_return(book)
+        session[:reader_id] = 1
+      end
+
+      it "sends find message" do
+        Book.should_receive(:find)
         put :update, id: book.id, book: params
       end
 
-      it "redirects to library page" do
-        expect(response).to redirect_to books_url
-      end
-
-      it "assigns flash[:notice]" do
-        expect(flash[:notice]).to_not be_nil
-      end
-    end
-
-    context "when update_attributes returns false" do
-      before :each do
-        book.stub(:update_attributes).and_return(false)
+      it "sends update_attributes message with provided params" do
+        book.should_receive(:update_attributes)
         put :update, id: book.id, book: params
       end
 
-      it "renders edit template" do
-        expect(response).to render_template :edit
+      context "when update_attributes returns true" do
+        before :each do
+          book.stub(:update_attributes).and_return(true)
+          put :update, id: book.id, book: params
+        end
+
+        it "redirects to library page" do
+          expect(response).to redirect_to books_url
+        end
+
+        it "assigns flash[:notice]" do
+          expect(flash[:notice]).to_not be_nil
+        end
       end
 
-      it "assigns @book variable to view" do
-        expect(assigns[:book]).to eq(book)
+      context "when update_attributes returns false" do
+        before :each do
+          book.stub(:update_attributes).and_return(false)
+          put :update, id: book.id, book: params
+        end
+
+        it "renders edit template" do
+          expect(response).to render_template :edit
+        end
+
+        it "assigns @book variable to view" do
+          expect(assigns[:book]).to eq(book)
+        end
+
+        it "assigns flash[:error]" do
+          expect(flash[:error]).not_to be_nil
+        end
+      end
+    end
+
+    context "when user is not logged in" do
+      before :each do
+        session[:reader_id] = nil
       end
 
-      it "assigns flash[:error]" do
-        expect(flash[:error]).not_to be_nil
+      it "redirects to access denied page" do
+        post :create
+        expect(response).to redirect_to access_denied_path
       end
     end
   end
@@ -260,10 +297,37 @@ describe BooksController do
       book.stub(:destroy).and_return(true)
     end
 
-    it "sends destroy" do
-      book.should_receive(:destroy)
+    it "sends find" do
+      Book.should_receive(:find).with(book.id.to_s)
       delete :destroy, id: book.id
-      expect(response).to redirect_to books_url
+    end
+
+    context "when reader is the owner" do
+      before :each do
+        book.stub(:owned_by?).and_return(true)
+      end
+
+      it "sends destroy" do
+        book.should_receive(:destroy)
+        delete :destroy, id: book.id
+        expect(response).to redirect_to books_url
+      end
+
+      it "redirects to library page" do
+        delete :destroy, id: book.id
+        expect(response).to redirect_to books_path
+      end
+    end
+
+    context "when reader id not the owner" do
+      before :each do
+        book.stub(:owned_by?).and_return(false)
+      end
+
+      it "redirects to access denied page" do
+        delete :destroy, id: book.id
+        expect(response).to redirect_to access_denied_path
+      end
     end
   end
 end
