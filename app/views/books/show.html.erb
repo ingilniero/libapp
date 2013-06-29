@@ -1,5 +1,9 @@
 <div class="row span3">
-  <img id="cover" data-src="holder.js/200x300">
+  <% if @book.cover? %>
+    <%= image_tag @book.cover.url, width: 150, height: 200 %>
+  <% else %>
+    <img id="cover" data-src="holder.js/200x300">
+  <% end %>
 </div>
 <div class="row span8">
   <div class="page-header">
